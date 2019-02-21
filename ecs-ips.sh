@@ -1,3 +1,5 @@
+#!/bin/sh
+
 while getopts "c:s:" o; do
   case "${o}" in
     c)
@@ -19,6 +21,10 @@ if [[ -z "${SERVICE_NAME}" ]] ; then
   LISTED_TASKS=$(aws ecs list-tasks --cluster $CLUSTER --output text | cut -f2)
 else
   LISTED_TASKS=$(aws ecs list-tasks --cluster $CLUSTER --service-name $SERVICE_NAME --output text | cut -f2)
+
+  if [[ -z "${LISTED_TASKS}" ]] ; then
+    exit 1
+  fi
 fi
 
 TASK_CONTAINER_INSTANCE_ARNS=$(aws ecs describe-tasks --cluster $CLUSTER --tasks $LISTED_TASKS --query 'tasks[*].[containerInstanceArn]' --output text)
