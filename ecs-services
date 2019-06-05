@@ -1,0 +1,21 @@
+#!/bin/sh
+
+usage() {
+  echo "Usage: $0 -c <cluster> [-s <service_name>]"
+  echo " <cluster> The name of the ECS Cluster you wish to get ECS services for"
+  exit 1
+}
+
+while getopts "c:" o; do
+  case "${o}" in
+    c)
+      CLUSTER=${OPTARG}
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
+aws ecs list-services --cluster $CLUSTER
